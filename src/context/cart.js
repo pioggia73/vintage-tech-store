@@ -2,16 +2,18 @@
 
 import React from 'react';
 import localCart from '../utils/localCart';
+import reducer from '../context/reducer';
 
 function getCartFromLocalStorage () {
     return localStorage.getItem('cart')? JSON.parse(localStorage.getItem('cart')) : [];
 }
 
+
 const CartContext = React.createContext();
 
 function CartProvider({children}) {
 
-    const [cart, setCart] = React.useState(getCartFromLocalStorage());
+    const [cart, dispatch] = React.useReducer(reducer, getCartFromLocalStorage());
     const [total, setTotal] = React.useState(0);
     const [cartItems, setCartItems] = React.useState(0);
 
@@ -35,48 +37,68 @@ function CartProvider({children}) {
 
     // remove item
     const removeItem = (id) => {
-        setCart([...cart].filter(item => item.id !== id))
+        dispatch({
+            type: 'REMOVE',
+            payload: id
+        })
+        //setCart([...cart].filter(item => item.id !== id))
     }
 
     // increase amount
     const increaseAmount = (id) => {
-        const newCart = [...cart].map(item => {
-           return  item.id === id? {...item, amount: item.amount + 1} : {...item}
+        dispatch({
+            type: 'INCREASE',
+            payload: id
         })
-        setCart(newCart)
+        // const newCart = [...cart].map(item => {
+        //    return  item.id === id? {...item, amount: item.amount + 1} : {...item}
+        // })
+        // setCart(newCart)
     }
 
     // decrease amount
     const decreaseAmount = (id, amount) => {
-        if (amount === 1) {
-            removeItem(id);
-            return
-        } else {
-            const newCart = [...cart].map(item => {
-                return item.id === id ? { ...item, amount: item.amount - 1 } : { ...item }
-            })
-            setCart(newCart)
-        }
+            if (amount === 1) {
+                dispatch ({type: 'REMOVE', payload: id})
+                return;
+            } else {
+                dispatch ({type: 'DECREASE', payload: id})
+            }
+        //     removeItem(id);
+        //     return
+        // } else {
+        //     const newCart = [...cart].map(item => {
+        //         return item.id === id ? { ...item, amount: item.amount - 1 } : { ...item }
+        //     })
+        //     setCart(newCart)
+        // }
     }
 
     // add to cart
     const addToCart = product => {
+        let item = [...cart].find(item => item.id === product.id);
+         if(item) {
+             dispatch ({type: 'DECREASE', payload: product.id})
+         } else {
+             dispatch ({type: 'ADD_TO_CART', payload: product})
+         }
        
-        const {id, image, title, price} = product
-        const item = [...cart].find(item => item.id === id);
-        if(item) {
-            increaseAmount(id);
-            return
-        } else {
-            const newItem = {id, image, title, price, amount: 1 }
-            const newCart = [...cart, newItem];
-            setCart(newCart);
-        }
+        // const {id, image, title, price} = product
+        // const item = [...cart].find(item => item.id === id);
+        // if(item) {
+        //     increaseAmount(id);
+        //     return
+        // } else {
+        //     const newItem = {id, image, title, price, amount: 1 }
+        //     const newCart = [...cart, newItem];
+        //     setCart(newCart);
+        // }
     }
 
     // clear cart
     const clearCart = () => {
-        setCart([])
+        dispatch ({type: 'CLEAR_CART'})
+        //setCart([])
     }
 
     return  <CartContext.Provider value= {{
