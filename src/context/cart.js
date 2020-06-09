@@ -3,6 +3,7 @@
 import React from 'react';
 import localCart from '../utils/localCart';
 import reducer from '../context/reducer';
+import {REMOVE} from './actions';
 
 function getCartFromLocalStorage () {
     return localStorage.getItem('cart')? JSON.parse(localStorage.getItem('cart')) : [];
@@ -38,7 +39,7 @@ function CartProvider({children}) {
     // remove item
     const removeItem = (id) => {
         dispatch({
-            type: 'REMOVE',
+            type: REMOVE,
             payload: id
         })
         //setCart([...cart].filter(item => item.id !== id))

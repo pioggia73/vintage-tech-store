@@ -22,3 +22,22 @@ export function featuredProducts(data) {
     })
 };
 
+// ********** paginete ********** //
+
+export function paginate(products) {
+    ////// code goes here later!!!!!
+    const itemsPerPage = 4;
+    const numberOfPages = Math.ceil(products.length / itemsPerPage);
+    
+    // const newProducts = Array.from({length: numberOfPages}, ()=> {
+    //     return products.splice(0, itemsPerPage)
+    // })
+
+    const newProducts = Array.from({length: numberOfPages}, (_, index) => {
+        const start = index * itemsPerPage
+        return products.slice(start, start + itemsPerPage)
+    })
+   
+
+    return newProducts;
+}

@@ -3,8 +3,7 @@
 import React from 'react';
 import axios from 'axios';
 import url from '../utils/URL';
-import {featuredProducts, flattenProducts} from '../utils/helpers';
-
+import {featuredProducts, flattenProducts, paginate} from '../utils/helpers';
 
 export const ProductContext = React.createContext();
 
@@ -15,6 +14,17 @@ export default function ProductProvider({children}) {
     const [products, setProducts] = React.useState([]);
     const [featured, setFeatured] = React.useState([]);
 
+    // *********** extra state values ********** //
+
+    const [sorted, setSorted] = React.useState([]);
+    const [page, setPage] = React.useState(0);
+    const [filters, setFilters] = React.useState({
+        search: '',
+        category: 'all',
+        shipping: false,
+        price: 'all'
+    });
+
     // ********** data fetching ********** //
 
 React.useEffect(() => {
@@ -23,6 +33,7 @@ React.useEffect(() => {
     .then(response => {
         const featured = featuredProducts(flattenProducts(response.data))
         const products = flattenProducts(response.data)
+        setSorted(paginate(products))
         setProducts(products)
         setFeatured(featured)
         setLoading(false)
@@ -31,10 +42,26 @@ React.useEffect(() => {
 
     }
 }, []);
+
+const changePage = (index) => {
+    setPage(index)
+};
+
+const updateFilters = e => {
+    alert(e)
+};
     
     return (
         <ProductContext.Provider 
-            value={{products, loading, featured}}
+            value={{
+                products, 
+                loading, 
+                featured, 
+                sorted, 
+                page, 
+                filters, 
+                changePage, 
+                updateFilters}}
         >
             {children}
         </ProductContext.Provider>
