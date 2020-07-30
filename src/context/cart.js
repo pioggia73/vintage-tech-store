@@ -1,14 +1,13 @@
 // cart context
 
 import React from 'react';
-import localCart from '../utils/localCart';
+//import localCart from '../utils/localCart';
 import reducer from '../context/reducer';
 import {REMOVE} from './actions';
 
 function getCartFromLocalStorage () {
     return localStorage.getItem('cart')? JSON.parse(localStorage.getItem('cart')) : [];
 }
-
 
 const CartContext = React.createContext();
 
@@ -27,6 +26,7 @@ function CartProvider({children}) {
         return (total += cartItem.amount)
     }, 0)
     setCartItems(newCartItems)
+    
 
         // cart total price
         let newCartTotal = cart.reduce((total, cartItem) => {

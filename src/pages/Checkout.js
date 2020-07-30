@@ -23,7 +23,7 @@ function Checkout(props) {
 
   async function handleSubmit (e) {
     showAlert({msg: 'submitting order ... please wait'})
-    e. preventDefault();
+    e.preventDefault();
     const response = await props.stripe
       .createToken()
       .catch(error => console.log(error))
